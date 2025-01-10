@@ -23,10 +23,4 @@ export const nav_items=[
         href: "/contact",
         icon:""
      },
-    {
-        id: 5,
-        title: "LogIn",
-        href: "/login",
-        icon:""
-     }
  ]

@@ -10,7 +10,8 @@ import Login from "./Components/pages/Login";
 import { nav_items } from "./Components/pages/navitems";
 import Registration from "./Components/pages/Registration";
 import Dashbord from "./Components/pages/Dashbord";
-import { AuthProvider } from "./content/AuthProvider";
+// import { AuthProvider } from "./content/AuthProvider";
+import { AuthProvider } from "./content/Auth2";
 function App() {
   return (
     <>

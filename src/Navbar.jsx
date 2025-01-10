@@ -3,6 +3,7 @@ import { nav_items } from "./Components/pages/navitems";
 import { Link } from "react-router-dom";
 
 const Navbar = () => {
+  
   return (
     <>
       <div className="w-full p-3 flex justify-between items-center gap-3 bg-gray-600">

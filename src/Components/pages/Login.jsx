@@ -4,10 +4,12 @@ import loginphoto from "../../photos/loginphoto.png";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { toast } from "react-toastify";
-import { MyAuthProvider } from "../../content/AuthProvider";
+// import { MyAuthProvider } from "../../content/AuthProvider";
+import { MyProvider } from "../../content/Auth2";
 
 const Login = () => {
-  const { token, isLoggedIn } = useContext(MyAuthProvider);
+  // const { token, isLoggedIn } = useContext(MyAuthProvider);
+  const { setToken, isLoggedIn, setIsLoggedIn } = useContext(MyProvider);
   const [clickedButton, setClickedButton] = useState(null);
   const navigate = useNavigate();
   const handleButtonClick = (buttonName) => {
@@ -25,11 +27,13 @@ const Login = () => {
         body: JSON.stringify(values),
       });
       const data = await res.json();
-      const token = data.token;
       if (res.ok) {
         console.log(data);
-        localStorage.setItem("token", token);
+        localStorage.setItem("token", data.token);
+        setToken(data.token);
         toast.success(data.msg);
+        setIsLoggedIn(true);
+        navigate("/dashboard");
       } else {
         // console.log(data.msg);
         toast.error(data.msg);
@@ -40,10 +44,8 @@ const Login = () => {
   };
 
   useEffect(() => {
-    if (isLoggedIn) {
-      navigate("/dashboard");
-    }
-  }, [isLoggedIn]);
+    if (isLoggedIn) return navigate("/dashboard");
+  }, []);
 
   return (
     <>
@@ -70,11 +72,11 @@ const Login = () => {
                   // console.log("Login button clicked");
                   console.log(values);
                   fetchData(values);
-                  navigate("/dashboard");
-                  setTimeout(() => {
-                    // alert(JSON.stringify(values, null, 2));
-                    setSubmitting(false);
-                  }, 400);
+                  // navigate("/dashboard");
+                  // setTimeout(() => {
+                  //   // alert(JSON.stringify(values, null, 2));
+                  //   setSubmitting(false);
+                  // }, 400);
                 } else if (clickedButton === "register") {
                   console.log("Register button clicked");
                   navigate("/registration");
