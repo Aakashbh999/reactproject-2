@@ -1,22 +1,29 @@
+import axios from "axios";
 import React from "react";
 import { useEffect, useState } from "react";
 const Services = () => {
   const [data, setData] = useState([]);
   const fetchData = async () => {
     const URL = "https://api.durlavparajuli.com.np/api/data/service";
-
     try {
-      const res = await fetch(URL);
-      const data = await res.json();
-      if (res.ok) {
-        setData(data);
-        console.log(data);
-      } else {
-        console.log("Server Error!!!");
-      }
-    } catch (error) {
-      console.log(error);
+      const res = await axios.get(URL);
+      setData(res.data);
+    } catch (err) {
+      console.log(err);
     }
+
+    // try {
+    //   const res = await fetch(URL);
+    //   const data = await res.json();
+    //   if (res.ok) {
+    //     setData(data);
+    //     console.log(data);
+    //   } else {
+    //     console.log("Server Error!!!");
+    //   }
+    // } catch (error) {
+    //   console.log(error);
+    // }
   };
   useEffect(() => {
     fetchData();

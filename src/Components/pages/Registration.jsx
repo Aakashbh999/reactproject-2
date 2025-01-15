@@ -2,30 +2,49 @@ import React from "react";
 import { ErrorMessage, Field, Form, Formik } from "formik";
 import { Registrationvalidation } from "../validationschemas/Registrationvalidation";
 import { toast } from "react-toastify";
+import { API_URL } from "../../utils/CONSTANT";
+import axios from "axios";
 
 const Registration = () => {
   const fetchData = async (values) => {
-    const URL = "https://api.durlavparajuli.com.np/api/auth/register";
-
+    const URL = `${API_URL}/api/auth/register`;
     try {
-      const res = await fetch(URL, {
-        method: "POST",
+      const res = await axios.post(URL, values, {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(values),
       });
-      const data = await res.json();
-      if (res.ok) {
-        console.log(data);
-        toast.success(data.msg);
-      } else {
-        // console.log(data.msg);
-        toast.error(data.msg);
-      }
-    } catch (error) {
-      console.log(error);
+      toast.success(res.data.msg);
+    } catch (err) {
+      console.log(err);
+      toast.error(err.response.data.message);
     }
+
+    const fetchData = (api) => {
+      return data;
+    };
+
+    fetchData("/api/data");
+
+    // try {
+    //   const res = await fetch(URL, {
+    //     method: "POST",
+    //     headers: {
+    //       "Content-Type": "application/json",
+    //     },
+    //     body: JSON.stringify(values),
+    //   });
+    //   const data = await res.json();
+    //   if (res.ok) {
+    //     console.log(data);
+    //     toast.success(data.msg);
+    //   } else {
+    //     // console.log(data.msg);
+    //     toast.error(data.msg);
+    //   }
+    // } catch (error) {
+    //   console.log(error);
+    // }
   };
   return (
     <>
@@ -45,7 +64,7 @@ const Registration = () => {
             setSubmitting(false);
           }, 400);
         }}
-        validationSchema={Registrationvalidation}
+        // validationSchema={Registrationvalidation}
       >
         {({ isSubmitting }) => (
           <Form className="flex flex-col gap-2 w-[20%] ">

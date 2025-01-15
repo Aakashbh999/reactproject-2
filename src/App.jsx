@@ -12,6 +12,10 @@ import Registration from "./Components/pages/Registration";
 import Dashbord from "./Components/pages/Dashbord";
 // import { AuthProvider } from "./content/AuthProvider";
 import { AuthProvider } from "./content/Auth2";
+import Userinfo from "./Components/Admin/Userinfo";
+import Contactinfo from "./Components/Admin/Contactinfo";
+import Servicesinfo from "./Components/Admin/Servicesinfo";
+import Edit from "./Components/Admin/Modification/Edit";
 function App() {
   return (
     <>
@@ -28,7 +32,12 @@ function App() {
               path="/registration"
               element={<Registration></Registration>}
             />
-            <Route path="/dashboard" element={<Dashbord></Dashbord>} />
+            <Route path="/dashboard/*" element={<Dashbord />}>
+              <Route path="users" element={<Userinfo />} />
+              <Route path="contact" element={<Contactinfo />} />
+              <Route path="service" element={<Servicesinfo />} />
+              <Route path="edit/:id" element={<Edit />} />
+            </Route>
           </Routes>
         </AuthProvider>
       </BrowserRouter>

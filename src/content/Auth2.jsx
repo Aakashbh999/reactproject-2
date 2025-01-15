@@ -7,48 +7,47 @@ export const AuthProvider = ({ children }) => {
   const navigate = useNavigate();
   const [token, setToken] = useState(localStorage.getItem("token"));
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  //   console.log(children);
-  console.log(isLoggedIn);
 
   const logOut = () => {
-    localStorage.removeItem("token");
-    setToken("");
+    console.log("hello logout");
+    setToken(localStorage.removeItem("token"));
     setIsLoggedIn(false);
     navigate("/login");
   };
-
   const verifyToken = async () => {
     const URL = "https://api.durlavparajuli.com.np/api/auth/user";
     try {
+      console.log("enter to auth");
       const res = await fetch(URL, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
-      console.log("hello");
-      const data = await res.json();
-      console.log(data);
       if (res.ok) {
+        console.log("verifyed");
         setIsLoggedIn(true);
         navigate("/dashboard");
+      } else {
+        logOut();
       }
     } catch (error) {
-      logOut();
       console.log(error);
     }
   };
-
-  console.log(token);
-
   useEffect(() => {
     if (token) {
       verifyToken();
     }
-  }, []);
-
+  }, [token]);
   return (
     <MyProvider.Provider
-      value={{ token, setToken, isLoggedIn, logOut, setIsLoggedIn }}
+      value={{
+        setToken,
+        setIsLoggedIn,
+        isLoggedIn,
+        token,
+        logOut,
+      }}
     >
       {children}
     </MyProvider.Provider>

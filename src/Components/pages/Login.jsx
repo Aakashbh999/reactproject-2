@@ -28,12 +28,12 @@ const Login = () => {
       });
       const data = await res.json();
       if (res.ok) {
-        console.log(data);
+        // console.log(data);
         localStorage.setItem("token", data.token);
         setToken(data.token);
         toast.success(data.msg);
         setIsLoggedIn(true);
-        navigate("/dashboard");
+        // navigate("/dashboard");
       } else {
         // console.log(data.msg);
         toast.error(data.msg);
@@ -42,10 +42,6 @@ const Login = () => {
       console.log(error);
     }
   };
-
-  useEffect(() => {
-    if (isLoggedIn) return navigate("/dashboard");
-  }, []);
 
   return (
     <>
