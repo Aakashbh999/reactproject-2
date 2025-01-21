@@ -1,34 +1,31 @@
 import React, { useContext, useEffect, useState } from "react";
-import { API_URL } from "../../utils/CONSTANT";
-import { toast } from "react-toastify";
-import axios from "axios";
 import { MyProvider } from "../../content/Auth2";
 import { Link } from "react-router-dom";
+import { deleteRequest, getPublicRequest } from "../../utils/queries";
+import Loading from "../../useHooks/Loading";
 
 const Userinfo = () => {
   const { token, setIsClicked, isClicked } = useContext(MyProvider);
   const [data, setData] = useState(null);
-  // console.log(isClicked);
+  const { isLoading, setIsLoading, handleLoading } = Loading();
 
-  const fetchData = async () => {
-    const URL = `${API_URL}/api/admin/users`;
-    try {
-      const res = await axios.get(URL, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      // console.log(res);
-      setData(res.data);
-      console.log(data);
-    } catch (error) {
-      console.log(error);
-      toast(error.re.res.data.message);
-    }
+  const hello = async () => {
+    const data = await getPublicRequest("/api/admin/users");
+    setData(data.data);
+    setIsLoading(false);
+  };
+
+  const handleDelete = async (id) => {
+    console.log("hello");
+    const res = await deleteRequest(`/api/admin/users/${id}`);
+    hello();
+    console.log(res);
   };
   useEffect(() => {
-    fetchData();
+    hello();
   }, []);
+  if (isLoading) return handleLoading();
+
   return (
     <>
       <div className="w-[50%]  ">
@@ -43,40 +40,39 @@ const Userinfo = () => {
             </tr>
           </thead>
           <tbody>
-            {data ? (
-              data.map((item, index) => (
-                <tr key={index} className="border-2 border-black">
-                  <td className="border-2 border-black p-2 text-xl">
-                    {item.username}
-                  </td>
-                  <td className="border-2 border-black p-2 text-xl">
-                    {item.email}
-                  </td>
-                  <td className="border-2 border-black p-2 text-xl">
-                    {item.phone}
-                  </td>
-                  <td className="border-2 border-black p-2 text-xl">
-                    {item.isAdmin ? "Yes" : "No"}
-                  </td>
-                  <td className="border-2 border-black p-2 text-xl flex gap-3">
-                    <Link
-                      to={`/dashboard/edit/${item._id}`}
-                      className="p-2 bg-blue-500 rounded-xl"
-                    >
-                      Edit
-                    </Link>
+            {data?.map((item, index) => (
+              <tr key={index} className="border-2 border-black">
+                <td className="border-2 border-black p-2 text-xl">
+                  {item.username}
+                </td>
+                <td className="border-2 border-black p-2 text-xl">
+                  {item.email}
+                </td>
+                <td className="border-2 border-black p-2 text-xl">
+                  {item.phone}
+                </td>
+                <td className="border-2 border-black p-2 text-xl">
+                  {item.isAdmin ? "Yes" : "No"}
+                </td>
+                <td className="border-2 border-black p-2 text-xl flex gap-3">
+                  <Link
+                    to={`/dashboard/edit/contactinfo/${item._id}`}
+                    className="p-2 bg-blue-500 rounded-xl"
+                  >
+                    Edit
+                  </Link>
 
-                    <button className="p-2 bg-red-700 rounded-xl">
-                      Delete
-                    </button>
-                  </td>
-                </tr>
-              ))
-            ) : (
-              <tr>
-                <td colSpan="4">No data available</td>
+                  <button
+                    onClick={() => {
+                      handleDelete(item._id);
+                    }}
+                    className="p-2 bg-red-700 rounded-xl"
+                  >
+                    Delete
+                  </button>
+                </td>
               </tr>
-            )}
+            ))}
           </tbody>
         </table>
       </div>

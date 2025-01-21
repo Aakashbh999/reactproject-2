@@ -1,32 +1,12 @@
 import { Field, Form, Formik, ErrorMessage } from "formik";
 import React, { useState } from "react";
 import { Contactvalidation } from "../validationschemas/Contactvalidation";
-import { toast } from "react-toastify";
+import { postPublicRequest } from "../../utils/queries";
 
 const Contact = () => {
-  const fetchData = async (values) => {
-    const URL = "https://api.durlavparajuli.com.np/api/form/contact";
-    try {
-      const res = await fetch(URL, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(values),
-      });
-      const data = await res.json();
-      if (res.ok) {
-        console.log(data);
-        toast.success(data.msg);
-      } else {
-        // console.log(data.msg);
-        toast.error(data.msg);
-      }
-    } catch (error) {
-      console.log(error);
-    }
+  const hello = async (values) => {
+    const data = await postPublicRequest("/api/form/contact", values);
   };
-
   return (
     <>
       <div className="c bg-black w-full h-[100vh] m-0">
@@ -39,10 +19,8 @@ const Contact = () => {
           validationSchema={Contactvalidation}
           onSubmit={(values, { setSubmitting }) => {
             console.log(values);
-            fetchData(values);
+            hello(values);
             setTimeout(() => {
-              // alert(JSON.stringify(values));
-
               setSubmitting(false);
             }, 400);
           }}

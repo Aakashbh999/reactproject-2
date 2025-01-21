@@ -3,64 +3,86 @@ import { MyProvider } from "../../../content/Auth2";
 import { API_URL } from "../../../utils/CONSTANT";
 import axios from "axios";
 import { ErrorMessage, Field, Formik, Form, useFormik } from "formik";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 
 const Edit = () => {
+  const navigate = useNavigate();
   const { token } = useContext(MyProvider);
-  const [data, setData] = useState({});
-  const [clicked, setClicked] = useState(false);
+  const [data, setData] = useState({
+    username: "",
+    email: "",
+    phone: "",
+    isAdmin: false,
+  });
   const [loading, setLoading] = useState(true);
   const { id } = useParams();
-  // console.log(id);
-  const formik = useFormik({
-    initialValues: {
-      username: data.username,
-      email: data.email,
-      phone: data.phone,
-      isAdmin: data.isAdmin,
-    },
-    onSubmit: (values) => {
-      setClicked(true);
-      if (clicked) {
-        fetchData(values);
-      }
-      console.log(values);
-    },
-  });
-  const fetchData = async () => {
-    const URL = `${API_URL}/api/admin/user/${id}`;
+  const { componentname } = useParams();
+  let endpoint;
+  if (componentname === "contactinfo") {
+    endpoint = "api/admin/user";
+  } else if (componentname === "serviceinfo") {
+    endpoint = "api/admin/service";
+  } else {
+    endpoint = "";
+  }
+  const fetchData = async (endpoint) => {
+    const URL = `${API_URL}/${endpoint}/${id}`;
+    console.log(URL);
     try {
-      // if (clicked) {
-      //   console.log("hello");
-
-      //   const send = await axios.put(URL, values, {
-      //     headers: {
-      //       "Content-Type": "application/json",
-      //     },
-      //   });
-      //   setClicked(false);
-      //   console.log(send);
-      // }
       const res = await axios.get(URL, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
-      // const senddata = await axios.post(URL, {
-      //   headers: {},
-      // });
-      // console.log(res);
+
       setData(res.data);
+
       setLoading(false);
-      console.log(data);
+      // console.log(res.data);
+
+      // console.log(data);
     } catch (error) {
       console.log(error);
       // toast(error.re.res.data.message);
     }
   };
+  const formik = useFormik({
+    initialValues: {
+      username: data.username ||'',
+      email: data.email || "",
+      phone: data.phone || "",
+      isAdmin: data.isAdmin || false,
+    },
+
+    enableReinitialize: true,
+    onSubmit: (values) => {
+      updateData(values);
+
+      // console.log(values);
+    },
+  });
+  const updateData = async (values) => {
+    const URL = `${API_URL}/api/admin/users/${id}`;
+    try {
+      const res = await axios.put(URL, values, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+      console.log(res);
+      toast.success(res.data.message);
+      fetchData();
+      navigate("/dashboard/users");
+    } catch (error) {
+      console.log(error);
+      toast.error(error.response.data.message);
+    }
+  };
+
   useEffect(() => {
-    fetchData();
+    fetchData(endpoint);
   }, []);
   if (loading) {
     return <div>Loading...</div>;
@@ -89,6 +111,7 @@ const Edit = () => {
               type="email"
               name="email"
               value={formik.values.email}
+              onChange={formik.handleChange}
               className="text-black p-1 rounded-sm"
             />
           </div>
@@ -98,6 +121,7 @@ const Edit = () => {
               type="text"
               name="phone"
               value={formik.values.phone}
+              onChange={formik.handleChange}
               className="text-black p-1 rounded-sm"
             />
           </div>
@@ -105,6 +129,14 @@ const Edit = () => {
             <label className="text-2xl" htmlFor="isadmin">
               IsAdmin
             </label>
+            <select
+              name="isAdmin"
+              value={formik.values.isAdmin}
+              onChange={formik.handleChange}
+            >
+              <option value="true">Yes</option>
+              <option value="false">No</option>
+            </select>
           </div>
           <button
             type="submit"

@@ -9,13 +9,17 @@ const Navbar = () => {
   const handleLoggedIn = () => {
     if (isLoggedIn) {
       return (
-        <div className="w-[70px] h-[70px] rounded-full flex gap-2 justify-center items-center mx-3 ">
+        <div className="w-auto flex gap-2 justify-center items-center mx-3 ">
           <Link to="/dashboard">Dashboard</Link>
-          <img
-            src={loginphoto}
-            alt=""
-            className="w-full h-full rounded-full object-fill"
-          />
+          <div className="w-[40px] h-[50px] ">
+            <Link to="/user">
+              <img
+                src={loginphoto}
+                alt="#"
+                className="w-full h-full rounded-full object-fill"
+              />
+            </Link>
+          </div>
         </div>
       );
     } else {
@@ -47,7 +51,7 @@ const Navbar = () => {
               </ul>
             );
           })}
-          <button onClick={logOut}>{handleLoggedIn()}</button>
+          <div>{handleLoggedIn()}</div>
         </div>
       </div>
     </>

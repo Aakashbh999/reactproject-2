@@ -6,41 +6,27 @@ import { useState } from "react";
 import { toast } from "react-toastify";
 // import { MyAuthProvider } from "../../content/AuthProvider";
 import { MyProvider } from "../../content/Auth2";
+import { postPublicRequest } from "../../utils/queries";
 
 const Login = () => {
   // const { token, isLoggedIn } = useContext(MyAuthProvider);
-  const { setToken, isLoggedIn, setIsLoggedIn } = useContext(MyProvider);
+  const { setToken } = useContext(MyProvider);
   const [clickedButton, setClickedButton] = useState(null);
   const navigate = useNavigate();
+
+  const hello = async (values) => {
+    const data = await postPublicRequest("api/auth/login", values);
+    console.log(data);
+    if (data.status === 200) {
+      console.log(data.data.token, "ok");
+
+      localStorage.setItem("token", data.data.token);
+      setToken(data.data.token);
+      toast.success(data.data.msg);
+    }
+  };
   const handleButtonClick = (buttonName) => {
     setClickedButton(buttonName);
-  };
-  const fetchData = async (values) => {
-    const URL = "https://api.durlavparajuli.com.np/api/auth/login";
-
-    try {
-      const res = await fetch(URL, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(values),
-      });
-      const data = await res.json();
-      if (res.ok) {
-        // console.log(data);
-        localStorage.setItem("token", data.token);
-        setToken(data.token);
-        toast.success(data.msg);
-        setIsLoggedIn(true);
-        // navigate("/dashboard");
-      } else {
-        // console.log(data.msg);
-        toast.error(data.msg);
-      }
-    } catch (error) {
-      console.log(error);
-    }
   };
 
   return (
@@ -65,14 +51,11 @@ const Login = () => {
               }}
               onSubmit={(values, { setSubmitting }) => {
                 if (clickedButton === "login") {
-                  // console.log("Login button clicked");
-                  console.log(values);
-                  fetchData(values);
-                  // navigate("/dashboard");
-                  // setTimeout(() => {
-                  //   // alert(JSON.stringify(values, null, 2));
-                  //   setSubmitting(false);
-                  // }, 400);
+                  hello(values);
+                  setTimeout(() => {
+                    // alert(JSON.stringify(values, null, 2));
+                    setSubmitting(false);
+                  }, 400);
                 } else if (clickedButton === "register") {
                   console.log("Register button clicked");
                   navigate("/registration");

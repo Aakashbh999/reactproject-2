@@ -9,10 +9,12 @@ export const AuthProvider = ({ children }) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   const logOut = () => {
-    console.log("hello logout");
-    setToken(localStorage.removeItem("token"));
-    setIsLoggedIn(false);
-    navigate("/login");
+    // console.log("hello logout");
+    const check = window.confirm("Sure you want to LogOut!");
+    if (check) {
+      setToken(localStorage.removeItem("token"));
+      navigate("/login");
+    } else return;
   };
   const verifyToken = async () => {
     const URL = "https://api.durlavparajuli.com.np/api/auth/user";
@@ -39,6 +41,7 @@ export const AuthProvider = ({ children }) => {
       verifyToken();
     }
   }, [token]);
+  useEffect(() => {}, []);
   return (
     <MyProvider.Provider
       value={{

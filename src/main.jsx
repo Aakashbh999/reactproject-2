@@ -8,7 +8,7 @@ createRoot(document.getElementById("root")).render(
   <StrictMode>
     <ToastContainer
       position="top-center"
-      autoClose={5000}
+      autoClose={600}
       hideProgressBar={false}
       newestOnTop={false}
       closeOnClick={false}

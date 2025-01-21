@@ -1,53 +1,27 @@
 import React, { useContext, useEffect, useState } from "react";
-import { API_URL } from "../../utils/CONSTANT";
-import { toast } from "react-toastify";
-import axios from "axios";
 import { MyProvider } from "../../content/Auth2";
-// import HandleDelete from "./Modification/HandleDelete";
+import Loading from "../../useHooks/Loading";
+import { deleteRequest, getPrivateRequest } from "../../utils/queries";
 
 const Contactinfo = () => {
-    const { token } = useContext(MyProvider);
-    const [data, setData] = useState(null);
-    const fetchData = async () => {
-      const URL = `${API_URL}/api/admin/contacts`;
-      try {
-        const res = await axios.get(URL, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        //   console.log(res);
-        setData(res.data);
-        console.log(data);
-      } catch (error) {
-        console.log(error);
-        toast(error.re.res.data.message);
-      }
-    };
+  const [data, setData] = useState(null);
+  const { isLoading, setIsLoading, handleLoading } = Loading();
+
+  const hello = async () => {
+    const data = await getPrivateRequest("/api/admin/contacts");
+    setData(data.data);
+    setIsLoading(false);
+  };
   const handleDelete = async (id) => {
-    console.log(id);
-    const URL = `${API_URL}/api/admin/contacts/${id}`;
-    const check = window.confirm("data will be deleted parmanently!");
-    if (!check) {
-      return;
-    }
-    try {
-      const res = await axios.delete(URL, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      console.log(res);
-      toast.success(res.data.message);
-      fetchData();
-    } catch (error) {
-      console.log(error);
-    }
+    console.log("hello");
+    const res = await deleteRequest(`/api/admin/contacts/${id}`);
+    hello();
   };
 
   useEffect(() => {
-    fetchData();
+    hello();
   }, []);
+  if (isLoading) return handleLoading();
   return (
     <>
       <div className="w-[50%]  ">
@@ -61,7 +35,7 @@ const Contactinfo = () => {
             </tr>
           </thead>
           <tbody>
-            {data ? (
+            {data &&
               data.map((item, index) => (
                 <tr key={index} className="border-2 border-black">
                   <td className="border-2 border-black p-2 text-xl">
@@ -84,12 +58,7 @@ const Contactinfo = () => {
                     </button>
                   </td>
                 </tr>
-              ))
-            ) : (
-              <tr>
-                <td colSpan="4">No data available</td>
-              </tr>
-            )}
+              ))}
           </tbody>
         </table>
       </div>
